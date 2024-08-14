@@ -214,6 +214,59 @@ def plot_residuals(y_true, y_pred, title):
     )
     fig.show()
 
+def plot_residuals_sns(y_true, y_pred, title):
+    """
+    Plots the residuals of a regression model's predictions using Seaborn.
+
+    Parameters:
+    - y_true: Actual target values.
+    - y_pred: Predicted target values by the model.
+    - title: Title of the plot.
+
+    Returns:
+    - None (displays the residuals plot).
+    """
+    # Calculate residuals
+    residuals = y_true - y_pred
+    
+    # Calculate mean and standard deviation of residuals
+    mean_residual = np.mean(residuals)
+    std_residual = np.std(residuals)
+    
+    # Create a DataFrame for plotting
+    import pandas as pd
+    residuals_df = pd.DataFrame({
+        'Predicted Values': y_pred,
+        'Residuals': residuals
+    })
+    
+    # Create the residuals plot
+    plt.figure(figsize=(10, 6))
+    sns.scatterplot(x='Predicted Values', y='Residuals', data=residuals_df, alpha=0.5)
+    
+    # Add horizontal lines and shaded area
+    plt.axhline(y=0, color='red', linestyle='--', label='Zero Error')
+    plt.axhline(y=mean_residual, color='blue', linestyle=':', label=f'Mean Residual: {mean_residual:.2f}')
+    
+    plt.fill_betweenx(
+        y=[mean_residual - std_residual, mean_residual + std_residual],
+        x1=min(y_pred),
+        x2=max(y_pred),
+        color='lightblue',
+        alpha=0.3,
+        label=f'±1 Std Dev ({std_residual:.2f})'
+    )
+    
+    # Set plot labels and title
+    plt.xlabel('Predicted Values')
+    plt.ylabel('Residuals')
+    plt.title(title)
+    plt.legend()
+    plt.grid(True)
+    
+    # Show the plot
+    plt.show()
+
 def plot_regression_metrics(metrics_df):
     """
     Plots model performance metrics using subplots arranged in the same row for each metric.
